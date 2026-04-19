@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { useOrderStore } from '../store/orderStore'
 import { useAuthStore } from '../store/authStore'
+import { useProductStore } from '../store/productStore'
 import { useNavigate } from 'react-router-dom'
 import { OrderCardSkeleton } from '../components/ui/Skeletons'
 
@@ -113,6 +114,7 @@ export default function OrdersPage() {
   const navigate = useNavigate()
   const { orders, fetchOrders, loading } = useOrderStore()
   const { user } = useAuthStore()
+  const { setCategory } = useProductStore()
 
   useEffect(() => {
     if (user) fetchOrders(user.id)
@@ -153,7 +155,13 @@ export default function OrdersPage() {
             <h2 className="text-2xl font-bold text-surface-900">No orders yet</h2>
             <p className="text-surface-500 text-sm mt-1 max-w-xs mx-auto font-medium">Looks like you haven't made any purchases. Explore our collection and start shopping!</p>
           </div>
-          <button onClick={() => navigate('/')} className="px-10 py-3 bg-brand-500 text-white font-bold rounded-sm shadow-md uppercase tracking-wider">
+          <button 
+            onClick={() => {
+              setCategory('All')
+              navigate('/')
+            }} 
+            className="px-10 py-3 bg-brand-500 text-white font-bold rounded-sm shadow-md uppercase tracking-wider"
+          >
              Discover Products
           </button>
         </div>

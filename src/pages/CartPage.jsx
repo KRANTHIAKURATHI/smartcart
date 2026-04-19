@@ -7,12 +7,14 @@ import {
 import { useCartStore } from '../store/cartStore'
 import { useOrderStore } from '../store/orderStore'
 import { useAuthStore } from '../store/authStore'
+import { useProductStore } from '../store/productStore'
 
 export default function CartPage() {
   const navigate = useNavigate()
   const { items, loading, removeFromCart, updateQuantity, clearCart, getTotal } = useCartStore()
   const { createOrder, loading: orderLoading } = useOrderStore()
   const { user } = useAuthStore()
+  const { setCategory } = useProductStore()
   const [checkoutDone, setCheckoutDone] = useState(false)
   const [orderId, setOrderId] = useState(null)
 
@@ -91,7 +93,13 @@ export default function CartPage() {
           <h2 className="text-2xl font-bold text-surface-950">Your cart is empty!</h2>
           <p className="text-surface-500 mt-1">Add items to it now.</p>
         </div>
-        <button onClick={() => navigate('/')} className="px-10 py-3 bg-brand-500 text-white font-bold shadow-md hover:shadow-xl transition-all rounded-sm uppercase tracking-wide">
+        <button 
+          onClick={() => {
+            setCategory('All')
+            navigate('/')
+          }} 
+          className="px-10 py-3 bg-brand-500 text-white font-bold shadow-md hover:shadow-xl transition-all rounded-sm uppercase tracking-wide"
+        >
           Shop Now
         </button>
       </div>
