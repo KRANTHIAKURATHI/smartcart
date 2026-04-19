@@ -35,9 +35,11 @@ function PublicRoute({ children }) {
 export default function App() {
   const { initialize, user } = useAuthStore()
   const { fetchCart } = useCartStore()
+  const { subscribeToInventory } = useProductStore()
 
   useEffect(() => {
     initialize()
+    subscribeToInventory()
   }, [])
 
   useEffect(() => {

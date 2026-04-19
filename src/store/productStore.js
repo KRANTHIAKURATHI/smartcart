@@ -27,8 +27,8 @@ export const useProductStore = create((set, get) => ({
       const categories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))]
 
       set({ products, categories })
-      get().subscribeToInventory()
     } catch (err) {
+      console.error('Fetch error:', err)
       set({ error: err.message })
     } finally {
       set({ loading: false })

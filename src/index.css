@@ -72,10 +72,20 @@
   }
 
   .skeleton {
-    @apply rounded-sm;
-    background: linear-gradient(90deg, #f1f3f6 25%, #e0e2e5 50%, #f1f3f6 75%);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite linear;
+    @apply rounded-sm relative overflow-hidden bg-surface-100;
+  }
+
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 1.5s infinite;
   }
 
   .sidebar-link {
@@ -138,4 +148,10 @@
 
 .animate-stagger > * {
   animation: slideUp 0.4s ease-out both;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
