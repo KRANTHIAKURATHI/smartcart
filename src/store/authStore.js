@@ -21,7 +21,8 @@ export const useAuthStore = create((set, get) => ({
 
       if (session) {
         set({ session, user: session.user })
-        await get().fetchProfile(session.user.id)
+        // Fetch profile without blocking the session setup
+        get().fetchProfile(session.user.id)
       }
     } catch (err) {
       console.warn('Auth initialization warning:', err.message)

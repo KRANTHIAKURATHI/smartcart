@@ -42,8 +42,13 @@ export default function App() {
     subscribeToInventory()
   }, [])
 
+  const { fetchProducts } = useProductStore()
+
   useEffect(() => {
-    if (user) fetchCart(user.id)
+    if (user) {
+      fetchCart(user.id)
+      fetchProducts()
+    }
   }, [user?.id])
 
   return (

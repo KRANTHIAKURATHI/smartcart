@@ -12,50 +12,34 @@ export const useCartStore = create((set, get) => ({
     if (!userId) return
     set({ loading: true, error: null })
     try {
-      // 1. Ensure user exists in public.users table (Sync check)
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', userId)
-        .single()
-
-      if (userError && userError.code === 'PGRST116') {
-        // User not in public table, insert them (important for social logins/persistence)
-        const { data: session } = await supabase.auth.getSession()
-        if (session?.session?.user) {
-          await supabase.from('users').insert({ 
-            id: userId, 
-            email: session.session.user.email,
-            role: 'USER' 
-          })
-        }
-      }
-
-      // 2. Get or create cart
-      let { data: cart, error } = await supabase
+      // Get or create cart directly (RLS will handle existence)
+      let { data: cart, error: cartError } = await supabase
         .from('carts')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code === 'PGRST116') {
+      if (!cart) {
         const { data: newCart, error: createError } = await supabase
           .from('carts')
           .insert({ user_id: userId })
           .select()
           .single()
-
+        
         if (createError) throw createError
         cart = newCart
-      } else if (error) {
-        throw error
       }
 
       set({ cart })
-      await get().fetchCartItems(cart.id)
-      get().subscribeToCart(cart.id)
+      
+      // Fetch items and subscribe in parallel
+      await Promise.all([
+        get().fetchCartItems(cart.id),
+        get().subscribeToCart(cart.id)
+      ])
+
     } catch (err) {
-      console.error('Fetch cart error:', err)
+      console.error('Cart optimization error:', err)
       set({ error: err.message })
     } finally {
       set({ loading: false })

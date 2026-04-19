@@ -26,6 +26,8 @@ export default function ProductCard({ product }) {
     }
   }
 
+  const [imageLoaded, setImageLoaded] = useState(false)
+
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
@@ -33,11 +35,19 @@ export default function ProductCard({ product }) {
     >
       {/* Image Area */}
       <div className="relative p-2 aspect-[4/5] bg-white flex items-center justify-center overflow-hidden border-b border-surface-100">
+        {!imageLoaded && product.image_url && (
+          <div className="absolute inset-0 skeleton" />
+        )}
+        
         {product.image_url ? (
           <img
             src={product.image_url}
             alt={product.name}
-            className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+            onLoad={() => setImageLoaded(true)}
+            loading="lazy"
+            className={`w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-all duration-500 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
           />
         ) : (
           <Package size={40} className="text-surface-200" />

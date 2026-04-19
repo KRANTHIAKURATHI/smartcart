@@ -10,7 +10,7 @@ export default function HomePage() {
   const { profile } = useAuthStore()
 
   useEffect(() => {
-    fetchProducts()
+    if (products.length === 0) fetchProducts()
   }, [])
 
   const filtered = getFiltered()
