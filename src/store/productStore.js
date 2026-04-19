@@ -148,8 +148,8 @@ export const useProductStore = create((set, get) => ({
   },
 
   subscribeToInventory: () => {
-    const { subscription } = get()
-    if (subscription) subscription.unsubscribe()
+    // Prevent duplicate subscriptions
+    if (get().subscription) return
 
     const sub = supabase
       .channel('products_realtime')
@@ -160,8 +160,20 @@ export const useProductStore = create((set, get) => ({
       }, () => {
         get().fetchProducts()
       })
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'CLOSED') {
+          set({ subscription: null })
+        }
+      })
 
     set({ subscription: sub })
   },
+
+  unsubscribe: () => {
+    const { subscription } = get()
+    if (subscription) {
+      subscription.unsubscribe()
+      set({ subscription: null })
+    }
+  }
 }))
