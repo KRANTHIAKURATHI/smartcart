@@ -36,10 +36,12 @@ function PublicRoute({ children }) {
 export default function App() {
   const { initialize, user } = useAuthStore()
   const { fetchCart } = useCartStore()
+  const { subscribeToInventory } = useProductStore()
+
   useEffect(() => {
     initialize()
     subscribeToInventory()
-    
+
     return () => {
       // Cleanup on unmount/reload to prevent websocket ghosting
       useProductStore.getState().unsubscribe()
